@@ -4,10 +4,11 @@ namespace Laravia\Posting\App\Models;
 
 use Laravia\Heart\App\Models\Model;
 use Orchid\Screen\AsSource;
+use Spatie\Tags\HasTags;
 
 class Posting extends Model
 {
-    use AsSource;
+    use AsSource, HasTags;
 
     protected $dates = [
         'onlineFrom',
