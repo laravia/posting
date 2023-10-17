@@ -24,6 +24,12 @@ class PostingListLayout extends Table
             TD::make('created_at', 'Created')->sort()->render(function ($posting) {
                 return $posting->created_at;
             }),
+            TD::make('active', 'Active')->sort()->render(function ($posting) {
+                return ($posting->active) ? __('Yes') : __('No');
+            }),
+            TD::make('tags', 'Tags')->sort()->render(function ($posting) {
+                return $posting->tags->implode('name', ', ');
+            }),
 
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
