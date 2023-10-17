@@ -1,6 +1,6 @@
 <?php
 
-use Laravia\Posting\App\Orchid\Screens\PostingScreen;
+use Laravia\Posting\App\Posting;
 
 $config['posting']['links'] = [
     [
@@ -13,5 +13,5 @@ $config['posting']['links'] = [
 ];
 
 $config['posting']['dashboard']['metrics'] = [
-    'postings' => ['sort' => 30, 'value' => data_get((new PostingScreen())->query(), 'metrics.postings.all'), 'title' => 'Postings'],
+    'postings' => ['sort' => 30, 'value' => Posting::getDashboardMetrics('postings'), 'title' => 'Postings'],
 ];
