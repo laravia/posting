@@ -21,9 +21,7 @@ class PostingModelTest extends TestCase
         $title = $this->faker->word;
         $onlineFrom = $this->faker->dateTime;
         $onlineTo = $this->faker->dateTime;
-        $created_at = $this->faker->dateTime;
-        $updated_at = $this->faker->dateTime;
-        $active = true;
+        $active = false;
         $user_id = $this->faker->numberBetween(1, 100);
         $project = $this->faker->word;
         $site = $this->faker->word;
@@ -34,8 +32,6 @@ class PostingModelTest extends TestCase
             'title' => $title,
             'onlineFrom' => $onlineFrom,
             'onlineTo' => $onlineTo,
-            'created_at' => $created_at,
-            'updated_at' => $updated_at,
             'active' => $active,
             'user_id' => $user_id,
             'project' => $project,
@@ -46,6 +42,8 @@ class PostingModelTest extends TestCase
         $this->assertDatabaseHas('postings', [
             'body' => $body,
             'title' => $title,
+            'onlineFrom' => $onlineFrom,
+            'onlineTo' => $onlineTo,
             'active' => $active,
             'user_id' => $user_id,
             'project' => $project,
