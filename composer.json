@@ -1,0 +1,51 @@
+{
+    "minimum-stability": "dev",
+    "name": "laravia/posting",
+    "description": "laravia package posting for heart",
+    "license": "license",
+    "authors": [
+        {
+            "name": "laravia",
+            "email": "code@laravia.art",
+            "homepage": "https://laravia.art"
+        }
+    ],
+    "homepage": "https://laravia.art",
+    "keywords": [
+        "Laravel",
+        "Laravia",
+        "Posting"
+    ],
+    "require": {
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Laravia\\Posting\\App\\": "./app",
+            "Laravia\\Posting\\Database\\": "./database",
+            "Laravia\\Posting\\Database\\Seeders\\": "./database/seeders"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laravia\\Posting\\App\\": "./app",
+            "Laravia\\Posting\\Database\\": "./database",
+            "Laravia\\Posting\\Database\\Seeders\\": "./database/seeders",
+            "Laravia\\Posting\\Tests\\": "./tests"
+        }
+    },
+    "scripts": {
+        "post-root-package-update": []
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laravia\\Posting\\App\\Providers\\PostingServiceProvider"
+            ],
+            "aliases": {
+                "LaraviaPosting": "Laravia\\Posting\\App\\Posting"
+            }
+        }
+    }
+}
