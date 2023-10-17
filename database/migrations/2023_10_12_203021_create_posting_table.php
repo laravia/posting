@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->dateTime('onlineFrom')->nullable();
             $table->dateTime('onlineTo')->nullable();
-            $table->tinyInteger('active')->nullable()->default(1);
+            $table->boolean('active')->nullable()->default(false);
             $table->timestamps();
         });
     }
