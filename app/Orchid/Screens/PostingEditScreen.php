@@ -2,7 +2,9 @@
 
 namespace Laravia\Posting\App\Orchid\Screens;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Laravia\Heart\App\Laravia;
 use Laravia\Posting\App\Models\Posting as ModelsPosting;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\DateTimer;
@@ -10,7 +12,7 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Support\Facades\Layout;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Select;
-use Orchid\Screen\Fields\SimpleMDE;
+use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
 
@@ -59,33 +61,30 @@ class PostingEditScreen extends Screen
     {
         return [
             Layout::rows([
+
+                Input::make('id')
+                    ->type('hidden')
+                    ->value($this->posting->id)
+                    ->hidden(),
                 Input::make('posting.title')
                     ->title('Title')
                     ->placeholder('Title')
                     ->required(),
-                Input::make('posting.tags')
+                Select::make('posting.tags')
+                    ->fromModel(\Spatie\Tags\Tag::class, 'name')
+                    ->multiple()
+                    ->allowAdd()
                     ->title('tags')
-                    ->placeholder('tags (separated by commas)')
-                    ->help('Select tags'),
-
-                SimpleMDE::make('posting.body')
+                    ->placeholder('choose or add tags'),
+                TextArea::make('posting.body')
                     ->title('Body')
-                    ->placeholder('markdown')
+                    ->rows(35)
                     ->required(),
             ]),
 
+
             Layout::columns([
-                Layout::rows([
-                    Select::make('posting.project')
-                        ->options([
-                            '1' => 'Project 1',
-                            '2' => 'Project 2',
-                            '3' => 'Project 3',
-                        ])
-                        ->title('Project')
-                        ->required()
-                        ->placeholder('Project'),
-                ]),
+
                 Layout::rows([
                     Input::make('posting.site')
                         ->title('Site')
@@ -103,6 +102,12 @@ class PostingEditScreen extends Screen
                         ->placeholder('Active')
                         ->value(true),
                 ]),
+                Layout::rows([
+                    Select::make('posting.project')
+                        ->title('Project')
+                        ->options(Laravia::getDataFromConfigByKey('projects'))
+                        ->placeholder('Project')
+                ])->canSee(sizeof(Laravia::getDataFromConfigByKey('projects'))),
             ]),
 
 
@@ -133,12 +138,34 @@ class PostingEditScreen extends Screen
 
     public function createOrUpdate(Request $request)
     {
-
         $posting = $request->get('posting');
         $posting['user_id'] = $request->user()->id;
-        $this->posting->fill($posting)->save();
 
-        Alert::info('You have successfully created a posting.');
+        $text = "";
+        if (Laravia::isNewEntry()) {
+            if (empty($posting['created_at'])) {
+                $posting['created_at'] = Carbon::now();
+            }
+            if (empty($posting['updated_at'])) {
+                $posting['updated_at'] = Carbon::now();
+            }
+            $text = __('You have successfully created a posting.');
+        } else {
+            if (empty($posting['updated_at'])) {
+                $posting['updated_at'] = Carbon::now();
+            }
+            $text = __('You have successfully updated a posting.');
+        }
+
+        if(isset($posting['active'])){
+            $posting['active'] = 1;
+        }else{
+            $posting['active'] = 0;
+        }
+        $this->posting->fill($posting)->save();
+        $this->posting->syncTags(Laravia::getSpatieTagsFromOrchidRequest($posting['tags']));
+
+        Alert::info($text);
 
         return redirect()->route('laravia.posting.list');
     }
