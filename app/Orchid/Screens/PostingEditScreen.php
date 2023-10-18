@@ -138,30 +138,23 @@ class PostingEditScreen extends Screen
 
     public function createOrUpdate(Request $request)
     {
+        $text = "";
         $posting = $request->get('posting');
         $posting['user_id'] = $request->user()->id;
+        $posting['active'] = isset($posting['active']);
 
-        $text = "";
+        if (empty($posting['updated_at'])) {
+            $posting['updated_at'] = Carbon::now();
+        }
         if (Laravia::isNewEntry()) {
             if (empty($posting['created_at'])) {
                 $posting['created_at'] = Carbon::now();
             }
-            if (empty($posting['updated_at'])) {
-                $posting['updated_at'] = Carbon::now();
-            }
             $text = __('You have successfully created a posting.');
         } else {
-            if (empty($posting['updated_at'])) {
-                $posting['updated_at'] = Carbon::now();
-            }
             $text = __('You have successfully updated a posting.');
         }
 
-        if(isset($posting['active'])){
-            $posting['active'] = 1;
-        }else{
-            $posting['active'] = 0;
-        }
         $this->posting->fill($posting)->save();
         $this->posting->syncTags(Laravia::getSpatieTagsFromOrchidRequest($posting['tags']));
 
