@@ -2,10 +2,12 @@
 
 namespace Laravia\Posting\App\Orchid\Layouts;
 
+use Laravia\Heart\App\Laravia;
 use Laravia\Posting\App\Models\Posting;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\Input;
 use Orchid\Screen\TD;
 use Orchid\Screen\Layouts\Table;
 
@@ -17,19 +19,23 @@ class PostingListLayout extends Table
     {
         return [
 
-            TD::make('id', 'ID')->sort()->cantHide(),
-            TD::make('title', 'Title')->sort()->render(function ($posting) {
+            TD::make('id', 'ID')->filter(Input::make())->sort()->cantHide(),
+            TD::make('title', 'Title')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->title;
             }),
-            TD::make('created_at', 'Created')->sort()->render(function ($posting) {
+            TD::make('created_at', 'Created')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->created_at;
             }),
-            TD::make('active', 'Active')->sort()->render(function ($posting) {
+            TD::make('active', 'Active')->filter(Input::make())->sort()->render(function ($posting) {
                 return ($posting->active) ? __('Yes') : __('No');
             }),
             TD::make('tags', 'Tags')->sort()->render(function ($posting) {
                 return $posting->tags->implode('name', ', ');
             }),
+
+            TD::make('project', 'Project')->filter(Input::make())->sort()->render(function ($posting) {
+                return $posting->project;
+            })->canSee(count(Laravia::getDataFromConfigByKey('projects'))),
 
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)

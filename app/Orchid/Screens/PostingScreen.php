@@ -19,7 +19,7 @@ class PostingScreen extends Screen
                 'postings' => ['all' => ModelsPosting::count()],
             ],
 
-            'postings' => ModelsPosting::orderByDesc('id')->paginate(),
+            'postings' => ModelsPosting::filters()->defaultSort('id')->paginate(),
         ];
     }
 
@@ -38,7 +38,7 @@ class PostingScreen extends Screen
         return [
             Link::make('Create new posting')
                 ->icon('pencil')
-                ->route('laravia.posting.edit')
+                ->href('posting?project=' . data_get(request()->get('filter'), 'project'))
         ];
     }
 

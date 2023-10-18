@@ -109,9 +109,9 @@ class PostingEditScreen extends Screen
                         ->title('Project')
                         ->options(Laravia::getDataFromConfigByKey('projects'))
                         ->placeholder('Project')
+                        ->value(data_get(request()->get('filter'), 'project'))
                 ])->canSee(sizeof(Laravia::getDataFromConfigByKey('projects'))),
             ]),
-
 
             Layout::columns([
                 Layout::rows([
