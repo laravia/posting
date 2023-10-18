@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravia\Heart\App\Laravia;
 use Laravia\Posting\App\Models\Posting as ModelsPosting;
+use Laravia\Tag\App\Tag as LaraviaTag;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Input;
@@ -15,6 +16,7 @@ use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
+use Spatie\Tags\Tag;
 
 class PostingEditScreen extends Screen
 {
@@ -71,7 +73,7 @@ class PostingEditScreen extends Screen
                     ->placeholder('Title')
                     ->required(),
                 Select::make('posting.tags')
-                    ->fromModel(\Spatie\Tags\Tag::class, 'name')
+                    ->fromQuery(Tag::where('type', '=', 'posting'), 'name')
                     ->multiple()
                     ->allowAdd()
                     ->title('tags')
@@ -156,7 +158,7 @@ class PostingEditScreen extends Screen
         }
 
         $this->posting->fill($posting)->save();
-        $this->posting->syncTags(Laravia::getSpatieTagsFromOrchidRequest($posting['tags']));
+        $this->posting->syncTagsWithType(LaraviaTag::getSpatieTagsFromOrchidRequest($posting['tags']), 'posting');
 
         Alert::info($text);
 
