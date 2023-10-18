@@ -158,7 +158,7 @@ class PostingEditScreen extends Screen
         }
 
         $this->posting->fill($posting)->save();
-        $this->posting->syncTagsWithType(LaraviaTag::getSpatieTagsFromOrchidRequest($posting['tags']), 'posting');
+        $this->posting->syncTagsWithType(LaraviaTag::getSpatieTagsFromOrchidRequest(data_get($posting,'tags')), 'posting');
 
         Alert::info($text);
 
