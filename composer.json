@@ -17,6 +17,7 @@
         "Posting"
     ],
     "require": {
+        "laravia/tag": "dev-main"
     },
     "require-dev": {
     },
