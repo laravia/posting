@@ -31,7 +31,7 @@ class PostingListLayout extends Table
                 $type = ($posting->active) ? Color::SUCCESS : Color::DANGER;
                 return Link::make(($posting->active) ? __('Yes') : __('No'))->type($type)->turbo(false)->route('laravia.posting.edit', $posting);
             }),
-            TD::make('tags', 'Tags')->sort()->render(function ($posting) {
+            TD::make('tags', 'Tags')->render(function ($posting) {
                 return $posting->tags->implode('name', ', ');
             }),
 
