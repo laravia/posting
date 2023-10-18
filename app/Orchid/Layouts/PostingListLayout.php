@@ -10,6 +10,7 @@ use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\TD;
 use Orchid\Screen\Layouts\Table;
+use Orchid\Support\Color;
 
 class PostingListLayout extends Table
 {
@@ -21,13 +22,14 @@ class PostingListLayout extends Table
 
             TD::make('id', 'ID')->filter(Input::make())->sort()->cantHide(),
             TD::make('title', 'Title')->filter(Input::make())->sort()->render(function ($posting) {
-                return $posting->title;
+                return Link::make($posting->title)->route('laravia.posting.edit', $posting);
             }),
             TD::make('created_at', 'Created')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->created_at;
             }),
             TD::make('active', 'Active')->filter(Input::make())->sort()->render(function ($posting) {
-                return ($posting->active) ? __('Yes') : __('No');
+                $type = ($posting->active) ? Color::SUCCESS : Color::DANGER;
+                return Link::make(($posting->active) ? __('Yes') : __('No'))->type($type)->turbo(false)->route('laravia.posting.edit', $posting);
             }),
             TD::make('tags', 'Tags')->sort()->render(function ($posting) {
                 return $posting->tags->implode('name', ', ');
