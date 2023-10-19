@@ -3,12 +3,12 @@
 namespace Laravia\Posting\App\Models;
 
 use Laravia\Heart\App\Models\Model;
+use Laravia\Tag\App\Traits\HasTags;
 use Orchid\Filters\Filterable;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
 use Orchid\Screen\AsSource;
-use Spatie\Tags\HasTags;
 
 class Posting extends Model
 {
@@ -32,6 +32,7 @@ class Posting extends Model
         'site',
         'element',
         'active',
+        'language'
     ];
     protected $allowedFilters = [
         'id'         => Where::class,
@@ -40,12 +41,15 @@ class Posting extends Model
         'created_at' => WhereDateStartEnd::class,
         'updated_at' => WhereDateStartEnd::class,
         'project' => Where::class,
+        'language' => Where::class,
     ];
     protected $allowedSorts = [
         'id',
         'title',
         'active',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'project',
+        'language'
     ];
 }
