@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravia\Heart\App\Laravia;
 use Laravia\Posting\App\Models\Posting as ModelsPosting;
-use Laravia\Tag\App\Tag as LaraviaTag;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Input;
@@ -59,83 +58,97 @@ class PostingEditScreen extends Screen
         ];
     }
 
+    public function layoutPosting()
+    {
+        return
+            [
+                Layout::rows([
+
+                    Input::make('id')
+                        ->type('hidden')
+                        ->value($this->posting->id)
+                        ->hidden(),
+                    Input::make('posting.title')
+                        ->title('Title')
+                        ->placeholder('Title')
+                        ->required(),
+                    Select::make('posting.tags')
+                        ->fromQuery(Tag::where('type', '=', 'posting'), 'name')
+                        ->multiple()
+                        ->allowAdd()
+                        ->title('tags')
+                        ->placeholder('choose or add tags'),
+                    TextArea::make('posting.body')
+                        ->title('Body')
+                        ->rows(35)
+                        ->required(),
+                ]),
+
+
+                Layout::columns([
+
+                    Layout::rows([
+                        Input::make('posting.site')
+                            ->title('Site')
+                            ->placeholder('Site'),
+                    ]),
+                    Layout::rows([
+                        Input::make('posting.element')
+                            ->title('Element')
+                            ->placeholder('Element'),
+                    ]),
+                    Layout::rows([
+                        Select::make('posting.language')
+                            ->title('Language Key')
+                            ->options(Laravia::getDataFromConfigByKey('languages'))
+                            ->placeholder('Language'),
+                    ]),
+
+                    Layout::rows([
+                        CheckBox::make('posting.active')
+                            ->title('Active')
+                            ->placeholder('Active')
+                            ->value(true)
+                            ->style('margin-bottom:1.25em;')
+                            ,
+                    ]),
+                    Layout::rows([
+                        Select::make('posting.project')
+                            ->title('Project')
+                            ->options(Laravia::getDataFromConfigByKey('projects'))
+                            ->placeholder('Project')
+                            ->value(data_get(request()->all(), 'project'))
+                    ])->canSee(sizeof(Laravia::getDataFromConfigByKey('projects'))),
+                ]),
+
+                Layout::columns([
+                    Layout::rows([
+                        DateTimer::make('posting.onlineFrom')
+                            ->title('Online from')
+                            ->enableTime()
+                            ->format24hr(),
+                        DateTimer::make('posting.onlineTo')
+                            ->title('Online to')
+                            ->enableTime()
+                            ->format24hr(),
+                    ]),
+                    Layout::rows([
+                        DateTimer::make('posting.created_at')
+                            ->title('Created')
+                            ->enableTime()
+                            ->format24hr(),
+                        DateTimer::make('posting.updated_at')
+                            ->title('Updated')
+                            ->enableTime()
+                            ->format24hr(),
+                    ]),
+                ])
+            ];
+    }
+
     public function layout(): array
     {
-        return [
-            Layout::rows([
-
-                Input::make('id')
-                    ->type('hidden')
-                    ->value($this->posting->id)
-                    ->hidden(),
-                Input::make('posting.title')
-                    ->title('Title')
-                    ->placeholder('Title')
-                    ->required(),
-                Select::make('posting.tags')
-                    ->fromQuery(Tag::where('type', '=', 'posting'), 'name')
-                    ->multiple()
-                    ->allowAdd()
-                    ->title('tags')
-                    ->placeholder('choose or add tags'),
-                TextArea::make('posting.body')
-                    ->title('Body')
-                    ->rows(35)
-                    ->required(),
-            ]),
-
-
-            Layout::columns([
-
-                Layout::rows([
-                    Input::make('posting.site')
-                        ->title('Site')
-                        ->placeholder('Site'),
-                ]),
-                Layout::rows([
-                    Input::make('posting.element')
-                        ->title('Element')
-                        ->placeholder('Element'),
-                ]),
-
-                Layout::rows([
-                    CheckBox::make('posting.active')
-                        ->title('Active')
-                        ->placeholder('Active')
-                        ->value(true),
-                ]),
-                Layout::rows([
-                    Select::make('posting.project')
-                        ->title('Project')
-                        ->options(Laravia::getDataFromConfigByKey('projects'))
-                        ->placeholder('Project')
-                        ->value(data_get(request()->all(), 'project'))
-                ])->canSee(sizeof(Laravia::getDataFromConfigByKey('projects'))),
-            ]),
-
-            Layout::columns([
-                Layout::rows([
-                    DateTimer::make('posting.onlineFrom')
-                        ->title('Online from')
-                        ->enableTime()
-                        ->format24hr(),
-                    DateTimer::make('posting.onlineTo')
-                        ->title('Online to')
-                        ->enableTime()
-                        ->format24hr(),
-                ]),
-                Layout::rows([
-                    DateTimer::make('posting.created_at')
-                        ->title('Created')
-                        ->enableTime()
-                        ->format24hr(),
-                    DateTimer::make('posting.updated_at')
-                        ->title('Updated')
-                        ->enableTime()
-                        ->format24hr(),
-                ]),
-            ]),
-        ];
+        return $this->layoutPosting();
     }
 
     public function createOrUpdate(Request $request)
@@ -158,7 +171,7 @@ class PostingEditScreen extends Screen
         }
 
         $this->posting->fill($posting)->save();
-        $this->posting->syncTagsWithType(LaraviaTag::getSpatieTagsFromOrchidRequest(data_get($posting,'tags')), 'posting');
+        $this->posting->saveTags(data_get($posting, 'tags'),'posting',data_get($posting, 'language'));
 
         Alert::info($text);
 
