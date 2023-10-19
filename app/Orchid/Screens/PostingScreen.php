@@ -19,7 +19,7 @@ class PostingScreen extends Screen
                 'postings' => ['all' => ModelsPosting::count()],
             ],
 
-            'postings' => ModelsPosting::filters()->defaultSort('id')->paginate(),
+            'postings' => ModelsPosting::filters()->defaultSort('id','desc')->paginate(),
         ];
     }
 
