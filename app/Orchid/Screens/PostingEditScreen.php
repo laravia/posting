@@ -109,8 +109,7 @@ class PostingEditScreen extends Screen
                             ->title('Active')
                             ->placeholder('Active')
                             ->value(true)
-                            ->style('margin-bottom:1.25em;')
-                            ,
+                            ->style('margin-bottom:1.25em;'),
                     ]),
                     Layout::rows([
                         Select::make('posting.project')
@@ -171,11 +170,11 @@ class PostingEditScreen extends Screen
         }
 
         $this->posting->fill($posting)->save();
-        $this->posting->saveTags(data_get($posting, 'tags'),'posting',data_get($posting, 'language'));
+        $this->posting->saveTags(data_get($posting, 'tags'), 'posting', data_get($posting, 'language'));
 
         Alert::info($text);
 
-        return redirect()->route('laravia.posting.list');
+        return redirect(config('platform.prefix') . '/postings?filter[project]=' . $this->posting->project);
     }
 
     public function remove()
