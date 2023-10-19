@@ -31,8 +31,19 @@ class PostingListLayout extends Table
                 $type = ($posting->active) ? Color::SUCCESS : Color::DANGER;
                 return Link::make(($posting->active) ? __('Yes') : __('No'))->type($type)->turbo(false)->route('laravia.posting.edit', $posting);
             }),
+            TD::make('language', 'Language')->filter(Input::make())->sort()->render(function ($posting) {
+                return $posting->language;
+            }),
             TD::make('tags', 'Tags')->render(function ($posting) {
-                return $posting->tags->implode('name', ', ');
+                $tags = [];
+                foreach ($posting->tags as $tag) {
+                    $tags[] = $tag->name = $tag->getTranslation('name', $posting->language);
+                }
+                return implode(', ', $tags);
+            }),
+
+            TD::make('language', 'Language')->filter(Input::make())->sort()->render(function ($posting) {
+                return data_get(Laravia::getDataFromConfigByKey('languages'), $posting->language);
             }),
 
             TD::make('project', 'Project')->filter(Input::make())->sort()->render(function ($posting) {
