@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('site', 100)->nullable();
             $table->string('element', 100)->nullable();
             $table->string('title', 255)->nullable();
+            $table->string('type', 255)->nullable();
             $table->longText('body');
             $table->integer('user_id')->unsigned()->index();
             $table->dateTime('onlineFrom')->nullable();

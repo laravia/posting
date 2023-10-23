@@ -46,6 +46,10 @@ class PostingListLayout extends Table
                 return data_get(Laravia::getDataFromConfigByKey('languages'), $posting->language);
             }),
 
+            TD::make('type', 'Type')->filter(Input::make())->sort()->render(function ($posting) {
+                return $posting->type;
+            }),
+
             TD::make('project', 'Project')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->project;
             })->canSee(count(Laravia::getDataFromConfigByKey('projects'))),

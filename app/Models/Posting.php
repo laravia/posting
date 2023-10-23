@@ -32,12 +32,14 @@ class Posting extends Model
         'site',
         'element',
         'active',
-        'language'
+        'language',
+        'type',
     ];
     protected $allowedFilters = [
-        'id'         => Where::class,
-        'title'       => Like::class,
-        'active'      => Where::class,
+        'id' => Where::class,
+        'title' => Like::class,
+        'active' => Where::class,
+        'type' => Where::class,
         'created_at' => WhereDateStartEnd::class,
         'updated_at' => WhereDateStartEnd::class,
         'project' => Where::class,
@@ -50,6 +52,7 @@ class Posting extends Model
         'created_at',
         'updated_at',
         'project',
-        'language'
+        'language',
+        'type',
     ];
 }
