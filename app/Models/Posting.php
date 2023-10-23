@@ -2,6 +2,8 @@
 
 namespace Laravia\Posting\App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Laravia\Heart\App\Models\Model;
 use Laravia\Tag\App\Traits\HasTags;
 use Orchid\Filters\Filterable;
@@ -55,4 +57,50 @@ class Posting extends Model
         'language',
         'type',
     ];
+
+    public function scopeWhereIsOnline($query)
+    {
+        return $query
+            ->where('active', true)
+
+            ->where(function ($query) {
+                $query->where('onlineFrom', '<', Carbon::now())->where('onlineTo', '>', Carbon::now());
+                $query->orWhere(function ($query) {
+                    $query->where('onlineFrom', null)->where('onlineTo', null);
+                });
+            })
+
+            ->orWhere(function ($query) {
+                $query->where('active', true);
+                $query->where('onlineFrom', '<', Carbon::now())->where('onlineTo', null);
+            })
+
+            ->orWhere(function ($query) {
+                $query->where('active', true);
+                $query->where('onlineTo', '>', Carbon::now())->where('onlineFrom', null);
+            });
+    }
+
+    public static function getSearchResultsIdFromCurrentProject(
+        $searchPhrase,
+        $project
+    ): \Illuminate\Support\Collection {
+
+        $contents = Posting::where('project', '=', $project)
+            ->where(function (Builder $query) use ($searchPhrase) {
+                return $query->where('body', 'like', '%' . $searchPhrase . '%')
+                    ->orWhere('title', 'like', '%' . $searchPhrase . '%');
+            })->pluck('id', 'id');
+
+        $searchPhraseAsKey = preg_split("/[\;|\+|\,|\*]/i", $searchPhrase);
+        $contentsFromTags = Posting::where('project', '=', $project)
+            ->withAnyTags($searchPhraseAsKey)
+            ->pluck('id', 'id');
+        return $contents->merge($contentsFromTags);
+    }
+
+    public static function getCountFromProject($project)
+    {
+        return Posting::where('project', '=', $project)->count();
+    }
 }
