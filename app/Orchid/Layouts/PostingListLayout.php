@@ -27,9 +27,18 @@ class PostingListLayout extends Table
             TD::make('created_at', 'Created')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->created_at;
             }),
+            TD::make('onlineFrom', 'Online from')->filter(Input::make())->sort()->render(function ($posting) {
+                return $posting->onlineFrom;
+            }),
+            TD::make('onlineTo', 'Online to')->filter(Input::make())->sort()->render(function ($posting) {
+                return $posting->onlineTo;
+            }),
             TD::make('active', 'Active')->filter(Input::make())->sort()->render(function ($posting) {
                 $type = ($posting->active) ? Color::SUCCESS : Color::DANGER;
-                return Link::make(($posting->active) ? __('Yes') : __('No'))->type($type)->turbo(false)->route('laravia.posting.edit', $posting);
+                return Link::make(($posting->active) ? __('Yes') : __('No'))
+                    ->type($type)
+                    ->turbo(false)
+                    ->route('laravia.posting.edit', $posting);
             }),
             TD::make('language', 'Language')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->language;
