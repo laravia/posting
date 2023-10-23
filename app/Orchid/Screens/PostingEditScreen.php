@@ -62,63 +62,64 @@ class PostingEditScreen extends Screen
     {
         return
             [
-                Layout::rows([
-
-                    Input::make('id')
-                        ->type('hidden')
-                        ->value($this->posting->id)
-                        ->hidden(),
-                    Input::make('posting.title')
-                        ->title('Title')
-                        ->placeholder('Title')
-                        ->required(),
-                    Select::make('posting.tags')
-                        ->fromQuery(Tag::where('type', '=', 'posting'), 'name')
-                        ->multiple()
-                        ->allowAdd()
-                        ->title('tags')
-                        ->placeholder('choose or add tags'),
-                    TextArea::make('posting.body')
-                        ->title('Body')
-                        ->rows(35)
-                        ->required(),
-                ]),
-
-
-                Layout::columns([
-
+                Layout::split([
                     Layout::rows([
-                        Input::make('posting.site')
-                            ->title('Site')
-                            ->placeholder('Site'),
+                        Input::make('posting.title')
+                            ->title('Title')
+                            ->placeholder('Title')
+                            ->required(),
+                        TextArea::make('posting.body')
+                            ->title('Body')
+                            ->rows(35)
+                            ->required(),
                     ]),
                     Layout::rows([
-                        Input::make('posting.element')
-                            ->title('Element')
-                            ->placeholder('Element'),
-                    ]),
-                    Layout::rows([
+
+                        Input::make('id')
+                            ->type('hidden')
+                            ->value($this->posting->id)
+                            ->hidden(),
+                        Select::make('posting.tags')
+                            ->fromQuery(Tag::where('type', '=', 'posting'), 'name')
+                            ->multiple()
+                            ->allowAdd()
+                            ->title('tags')
+                            ->placeholder('choose or add tags'),
                         Select::make('posting.language')
                             ->title('Language Key')
                             ->options(Laravia::getDataFromConfigByKey('languages'))
                             ->placeholder('Language'),
-                    ]),
-
-                    Layout::rows([
+                        Select::make('posting.type')
+                            ->title('Type')
+                            ->empty(__('Select or add a type'))
+                            ->options(Laravia::getArrayWithDistinctFieldDataFromClassByKey(ModelsPosting::class, 'type'))
+                            ->allowAdd()
+                            ->placeholder('Site'),
+                        Select::make('posting.site')
+                            ->title('Site')
+                            ->empty(__('Select or add a site'))
+                            ->options(Laravia::getArrayWithDistinctFieldDataFromClassByKey(ModelsPosting::class, 'site'))
+                            ->allowAdd()
+                            ->placeholder('Site'),
+                        Select::make('posting.element')
+                            ->title('Element')
+                            ->empty(__('Select or add a element'))
+                            ->options(Laravia::getArrayWithDistinctFieldDataFromClassByKey(ModelsPosting::class, 'element'))
+                            ->allowAdd()
+                            ->placeholder('Element'),
                         CheckBox::make('posting.active')
                             ->title('Active')
                             ->placeholder('Active')
                             ->value(true)
                             ->style('margin-bottom:1.25em;'),
-                    ]),
-                    Layout::rows([
                         Select::make('posting.project')
                             ->title('Project')
                             ->options(Laravia::getDataFromConfigByKey('projects'))
                             ->placeholder('Project')
                             ->value(data_get(request()->all(), 'project'))
                     ])->canSee(sizeof(Laravia::getDataFromConfigByKey('projects'))),
-                ]),
+                ])->ratio('50/50'),
+
 
                 Layout::columns([
                     Layout::rows([
