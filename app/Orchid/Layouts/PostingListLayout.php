@@ -22,7 +22,7 @@ class PostingListLayout extends Table
 
             TD::make('id', 'ID')->filter(Input::make())->sort()->cantHide(),
             TD::make('title', 'Title')->filter(Input::make())->sort()->render(function ($posting) {
-                return Link::make($posting->title)->route('laravia.posting.edit', $posting);
+                return Link::make(substr($posting->title, 0, 35) . '...')->route('laravia.posting.edit', $posting);
             }),
             TD::make('created_at', 'Created')->filter(Input::make())->sort()->render(function ($posting) {
                 return $posting->created_at;
